@@ -1,3 +1,3 @@
-# CortElx
+# Cort.ex
 
-CortElx is an implementation of Jeff Hawkins' Cortical Learning Algorithm in Elixir. 
+Cort.ex is an implementation of Jeff Hawkins' Cortical Learning Algorithm in Elixir. 
