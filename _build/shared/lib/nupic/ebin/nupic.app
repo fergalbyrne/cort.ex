@@ -1,0 +1,12 @@
+{application,nupic,
+             [{registered,[]},
+              {description,"nupic"},
+              {vsn,"0.0.1"},
+              {modules,['Elixir.Algorithms.Parallel',
+                        'Elixir.CLA.Neuron.Dendrite',
+                        'Elixir.CLA.Neuron.NeuronInfo',
+                        'Elixir.CLA.Neuron.Synapse','Elixir.CLA.Neuron',
+                        'Elixir.CLA.Patch','Elixir.Nupic.Network.NetworkInfo',
+                        'Elixir.Nupic.Network','Elixir.Nupic.Server',
+                        'Elixir.Nupic.Supervisor','Elixir.Nupic']},
+              {applications,[kernel,stdlib,elixir]}]}.

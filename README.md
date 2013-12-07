@@ -1,4 +1,3 @@
-cortelx
-=======
+# Nupic
 
-Experimental Elixir implementation of Numenta Platform for Machine Intelligence
+** TODO: Add description **
