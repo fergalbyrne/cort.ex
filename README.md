@@ -1,3 +1,3 @@
-# Nupic
+# CortElx
 
-** TODO: Add description **
+CortElx is an implementation of Jeff Hawkins' Cortical Learning Algorithm in Elixir. 
