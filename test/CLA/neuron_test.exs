@@ -1,4 +1,6 @@
 defmodule NeuronTest do
+	@vsn "0.0.3"
+	
   use ExUnit.Case
   alias CLA.Neuron
   doctest CLA.Neuron

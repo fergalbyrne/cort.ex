@@ -1,4 +1,5 @@
 defmodule Nupic.Server do
+	@vsn "0.0.1"
   use GenServer.Behaviour
   alias Nupic.Network.NetworkInfo
 

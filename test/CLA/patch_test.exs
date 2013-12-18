@@ -1,7 +1,7 @@
 defmodule PatchTest do
   use ExUnit.Case
 
-  @vsn "0.0.1"
+  @vsn "0.0.3"
 
   setup_all do
 	p = PatchInfo.new

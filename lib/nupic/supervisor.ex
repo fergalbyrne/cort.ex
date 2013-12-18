@@ -1,4 +1,6 @@
 defmodule Nupic.Supervisor do
+	@vsn "0.0.1"
+	
   use Supervisor.Behaviour
 
   # A convenience to start the supervisor

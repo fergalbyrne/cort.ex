@@ -1,4 +1,6 @@
 defmodule Algorithms.Parallel do
+	@vsn "0.0.1"
+	
 	def pmap(collection, fun) do
 		me = self
 		collection

@@ -1,4 +1,6 @@
 defmodule Nupic do
+	@vsn "0.0.1"
+	
 	use Application.Behaviour
 	
 	def start(_type, networks) do

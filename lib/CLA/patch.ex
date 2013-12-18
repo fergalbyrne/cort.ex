@@ -1,5 +1,6 @@
 defmodule CLA.Patch do
   use GenServer.Behaviour
+  @vsn "0.0.2"
   @max 256
 
   @moduledoc """

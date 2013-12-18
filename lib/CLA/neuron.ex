@@ -1,6 +1,6 @@
 defmodule CLA.Neuron do
 	use GenServer.Behaviour
-	
+	@vsn "0.0.2"
   @moduledoc """
 Models a CLA neuron
 
