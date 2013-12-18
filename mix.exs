@@ -19,6 +19,7 @@ defmodule Nupic.Mixfile do
   # To specify particular versions, regardless of the tag, do:
   # { :barbat, "~> 0.1", github: "elixir-lang/barbat.git" }
   defp deps do
-    [{:amrita,"0.2.4",[github: "josephwilk/amrita"]}]
+    #[{:amrita,"0.2.4",[github: "josephwilk/amrita"]}]
+    []
   end
 end

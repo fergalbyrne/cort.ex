@@ -1,13 +1,13 @@
 defmodule PatchTest do
   use ExUnit.Case
-  alias CLA.Neuron.NeuronInfo
 
   @vsn "0.0.1"
 
   setup_all do
+	p = PatchInfo.new
 	n1 = NeuronInfo.new(ref: make_ref)
-	{ :ok, server_pid } = CLA.Patch.start_link([])
-	{ :ok, server_pid: server_pid, n1: n1}
+	{ :ok, server_pid } = CLA.Patch.start_link(p)
+	{ :ok, server_pid: server_pid, n1: n1, p: p}
   end
 
   test "new patch does not contain n1", meta do
@@ -54,15 +54,27 @@ defmodule PatchTest do
   end
 
   test "loads of neurons", meta do
-	{ :ok, big_server_pid } = CLA.Patch.start_link([])
+	{ :ok, big_server_pid } = CLA.Patch.start_link(PatchInfo.new)
 	n1 = meta[:n1]
 	#server_pid = meta[:server_pid]
-	n = 2 * 1024
-	neurons = 1..n
+	n = 2048 * 1
+	n = 32
+	mult = 1024
+	kmult = 32
+	neurons = 1..(n * mult)
 		|>
-	Enum.map(fn(i) -> :gen_server.cast(big_server_pid, {:add, n1.ref(make_ref)}) end)
-	neurons = :gen_server.call(big_server_pid, {:neurons})
-	assert length(neurons) == n
+	Enum.map(fn(i) -> 
+		neuron = make_ref
+		:gen_server.cast(big_server_pid, {:add, n1.ref(neuron)}) 
+		neuron
+		end)
+	#neurons = :gen_server.call(big_server_pid, {:neurons})
+	assert length(neurons) == n * mult
+	last = hd(:lists.reverse neurons)
+	found = :gen_server.call(big_server_pid, {:pid, last})
+	last_neuron = :gen_server.call(found, {:dump})
+	assert last_neuron.ref == last
+	#1..n |> Enum.map(fn(i) -> :gen_server.cast(big_server_pid, {:add, n1.ref(make_ref)}) end)
   end
   
   teardown meta do

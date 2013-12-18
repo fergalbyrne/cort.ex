@@ -1,10 +1,6 @@
 defmodule CLA.Neuron do
 	use GenServer.Behaviour
 	
-	defrecord NeuronInfo, ref: nil, pid: nil, activation: 0, predictivity: 0, spike: false, feedforward: [], dendrites: [], axons: []
-	defrecord Synapse, ref: nil, from: nil, to: nil, permanence: 0.0, connected: false, signal: false
-	defrecord Dendrite, ref: nil, to: nil, signals: 0, spike: false
-	
   @moduledoc """
 Models a CLA neuron
 
@@ -13,7 +9,7 @@ Models a CLA neuron
 Create a new neuron
 
 	iex> n = Neuron.create() 
-	CLA.Neuron.NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: []]
+	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: []]
 	iex> a = n.activation
 	0
 
@@ -116,7 +112,7 @@ Creates a new CLA neuron.
 * Examples:
 
 	iex> Neuron.create() 
-	CLA.Neuron.NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
 
 """
 	def create(), do: NeuronInfo.new
@@ -129,17 +125,17 @@ connect(n1, n2): Connects neuron n2 to neuron n1's distal dendrites.
 * Examples:
 
 	iex> n1 = Neuron.create() 
-	CLA.Neuron.NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
 	iex> n1 = n1.ref("n1")
-	CLA.Neuron.NeuronInfo[ref: "n1", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	NeuronInfo[ref: "n1", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
 	iex> n2 = Neuron.create()
-	CLA.Neuron.NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
 	iex> n2 = n2.ref("n2")
-	CLA.Neuron.NeuronInfo[ref: "n2", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	NeuronInfo[ref: "n2", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
 	iex> Neuron.connect(n1, n2)
 	:ok
 
-"""
+    """
 	def connect(n1, n2info) do
 		#newn1 = do_add_synapse(n1, n2info)
 		#newn2 = do_add_axon(n2info, n1)
