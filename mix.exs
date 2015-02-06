@@ -2,9 +2,9 @@ defmodule Nupic.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :nupic,
-      version: "0.0.1",
-      elixir: ">= 0.11.2",
+    [ app: :cortex,
+      version: "0.0.2",
+      elixir: ">= 1.0.0",
       deps: deps ]
   end
 

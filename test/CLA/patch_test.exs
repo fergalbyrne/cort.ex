@@ -2,6 +2,7 @@ defmodule PatchTest do
   use ExUnit.Case
 
   @vsn "0.0.3"
+  @loads 32768
 
   setup_all do
 	p = PatchInfo.new
@@ -12,7 +13,9 @@ defmodule PatchTest do
 
   test "new patch does not contain n1", meta do
 	n1 = meta[:n1]
+	p = meta[:p]
 	server_pid = meta[:server_pid]
+	{ :ok, server_pid } = CLA.Patch.start_link(p)
     assert :gen_server.call(server_pid, {:pid, n1.ref}) == :undef
   end
 
@@ -53,13 +56,15 @@ defmodule PatchTest do
 	assert affected_neuron.predictivity == check_neuron.predictivity + 1
   end
 
-  test "loads of neurons", meta do
+  test "loads of neurons (#{@loads})", meta do
 	{ :ok, big_server_pid } = CLA.Patch.start_link(PatchInfo.new)
 	n1 = meta[:n1]
 	#server_pid = meta[:server_pid]
 	n = 2048 * 1
 	n = 32
+	n = @loads
 	mult = 1024
+	mult = 1
 	kmult = 32
 	neurons = 1..(n * mult)
 		|>
