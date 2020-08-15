@@ -5,8 +5,8 @@ defmodule PatchTest do
   @loads 32768
 
   setup_all do
-	p = PatchInfo.new
-	n1 = NeuronInfo.new(ref: make_ref)
+	p = %PatchInfo{}
+	n1 = %NeuronInfo{ref: make_ref}
 	{ :ok, server_pid } = CLA.Patch.start_link(p)
 	{ :ok, server_pid: server_pid, n1: n1, p: p}
   end
@@ -82,10 +82,6 @@ defmodule PatchTest do
 	#1..n |> Enum.map(fn(i) -> :gen_server.cast(big_server_pid, {:add, n1.ref(make_ref)}) end)
   end
   
-  teardown meta do
-	:gen_server.cast(meta[:server_pid], {:delete, meta[:n1].ref}) 
-  end
-
   defp get_neuron ref, meta do
 	server_pid = meta[:server_pid]
 	check_pid = :gen_server.call(server_pid, {:pid, ref})

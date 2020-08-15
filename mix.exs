@@ -1,4 +1,4 @@
-defmodule Nupic.Mixfile do
+defmodule Cortex.Mixfile do
   use Mix.Project
 
   def project do
@@ -10,7 +10,7 @@ defmodule Nupic.Mixfile do
 
   # Configuration for the OTP application
   def application do
-    []
+    [applications: [ :logger]]
   end
 
   # Returns the list of dependencies in the format:

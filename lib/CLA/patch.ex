@@ -1,9 +1,10 @@
+
 defmodule CLA.Patch do
-  use GenServer.Behaviour
+  use GenServer
   @vsn "0.0.2"
 
   @moduledoc """
-Manages a patch of Neurons in NuPIC.
+Manages a patch of Neurons in Cort.ex.
 """
 
   @doc """
@@ -15,14 +16,15 @@ p = PatchInfo.new
 :gen_server.cast(patch, {:add, n1})   
 :gen_server.call(patch, {:pid, n1ref})    
 """
+  
 
   def start_link(patch) do
     :gen_server.start_link(__MODULE__, patch, [])
   end
 
   def init(patch) do
-	self <- {:load_neurons} # once loaded, activate my neurons
-    { :ok, patch.pid(self) }
+	send self, {:load_neurons} # once loaded, activate my neurons
+    { :ok, %PatchInfo{ patch | pid: self} }
   end
 
   def handle_call({:pid, neuron_ref}, _from, patch) do
@@ -57,32 +59,32 @@ p = PatchInfo.new
     { :noreply,  patch}
   end
 
-  defp neuron_by_ref(neuron_ref, patch = PatchInfo[min_ref: nil, max_ref: nil]) do
-	Enum.find patch.neurons, false, fn(NeuronInfo[ref: r]) -> r == neuron_ref end
+  defp neuron_by_ref(neuron_ref, patch = %PatchInfo{min_ref: nil, max_ref: nil}) do
+	Enum.find patch.neurons, false, fn(%NeuronInfo{ref: r}) -> r == neuron_ref end
   end
-  defp neuron_by_ref(neuron_ref, patch = PatchInfo[min_ref: min, max_ref: max]) 
+  defp neuron_by_ref(neuron_ref, patch = %PatchInfo{min_ref: min, max_ref: max}) 
 		when (neuron_ref >= min and neuron_ref <= max) do
-	Enum.find patch.neurons, false, fn(NeuronInfo[ref: r]) -> r == neuron_ref end
+	Enum.find patch.neurons, false, fn(%NeuronInfo{ref: r}) -> r == neuron_ref end
   end
-  defp neuron_by_ref(neuron_ref, patch = PatchInfo[min_ref: min, max_ref: max, patches: {nil, _}]) 
+  defp neuron_by_ref(neuron_ref, patch = %PatchInfo{min_ref: min, max_ref: max, patches: {nil, _}}) 
 		when (neuron_ref < min) do
 	false
   end
-  defp neuron_by_ref(neuron_ref, patch = PatchInfo[min_ref: min, max_ref: max, patches: {nil, _}]) 
+  defp neuron_by_ref(neuron_ref, patch = %PatchInfo{min_ref: min, max_ref: max, patches: {nil, _}}) 
 		when (neuron_ref > max) do
 	false
   end
-  defp neuron_by_ref(neuron_ref, patch = PatchInfo[min_ref: min, max_ref: max, patches: {pid, _}]) 
+  defp neuron_by_ref(neuron_ref, patch = %PatchInfo{min_ref: min, max_ref: max, patches: {pid, _}}) 
 		when (neuron_ref < min) do
 	:gen_server.call(pid, {:find, neuron_ref})
   end
-  defp neuron_by_ref(neuron_ref, patch = PatchInfo[min_ref: min, max_ref: max, patches: {_, pid}]) 
+  defp neuron_by_ref(neuron_ref, patch = %PatchInfo{min_ref: min, max_ref: max, patches: {_, pid}}) 
 		when (neuron_ref > max) do
 	:gen_server.call(pid, {:find, neuron_ref})
   end
 
 
-  defp add(item, patch = PatchInfo[max: max]) do
+  defp add(item, patch = %PatchInfo{max: max}) do
 	case length patch.neurons do
 		n when n < max -> (
 			#IO.puts "adding neuron #{n} to patch #{inspect self}"
@@ -99,7 +101,7 @@ p = PatchInfo.new
 	end	
   end 
 
-  defp add_to_subpatch(item, patch = PatchInfo[patches: {nil,_}]) do
+  defp add_to_subpatch(item, patch = %PatchInfo{patches: {nil,_}}) do
 	#{ :ok, subpatch } = start_link(PatchInfo.new)
 	#IO.puts "new subpatch starting"
 	{ :ok, left } = :gen_server.start_link(__MODULE__, PatchInfo.new, [])
@@ -107,13 +109,13 @@ p = PatchInfo.new
 	:gen_server.cast(self, {:add, item})
 	patch.patches({left,right})
   end
-  defp add_to_subpatch(item = NeuronInfo[ref: ref], patch = PatchInfo[min_ref: min, patches: {subpatch,_}]) 
+  defp add_to_subpatch(item = %NeuronInfo{ref: ref}, patch = %PatchInfo{min_ref: min, patches: {subpatch,_}}) 
 		when ref < min do
 	#IO.puts "sending new neuron to subpatch #{inspect subpatch} to add"
 	:gen_server.cast(subpatch, {:add, item})
 	patch
   end
-  defp add_to_subpatch(item = NeuronInfo[ref: ref], patch = PatchInfo[max_ref: max, patches: {_,subpatch}]) 
+  defp add_to_subpatch(item = %NeuronInfo{ref: ref}, patch = %PatchInfo{max_ref: max, patches: {_,subpatch}}) 
 		when ref > max do
 	#IO.puts "sending new neuron to subpatch #{inspect subpatch} to add"
 	:gen_server.cast(subpatch, {:add, item})

@@ -1,5 +1,6 @@
+
 defmodule CLA.Neuron do
-	use GenServer.Behaviour
+	use GenServer
 	@vsn "0.0.2"
   @moduledoc """
 Models a CLA neuron
@@ -9,7 +10,7 @@ Models a CLA neuron
 Create a new neuron
 
 	iex> n = Neuron.create() 
-	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: []]
+	%NeuronInfo{ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: []}
 	iex> a = n.activation
 	0
 
@@ -30,7 +31,7 @@ Create a new neuron
 	end
 	
 	def handle_cast({:loaded}, info) do
-		info = info.pid(self)
+		info = %NeuronInfo{info | pid: self}
 		#IO.puts "Neuron loaded: #{info.ref}"
 		{ :noreply, info}
 	end
@@ -91,17 +92,14 @@ Create a new neuron
 	end
 
 	def handle_cast({:force_spike, value}, info) do
-		info.axons
-			|>
-		Enum.map(fn(tup) -> 
-			signal(tup, value, info)
-		end)
-		{ :noreply, info}
+		info.axons |> Enum.map(fn(tup) -> signal(tup, value, info) end)
+		{:noreply, info}
 	end
 
 	defp signal({to_ref, perm, to_pid}, value, info) when perm >= 0.1 do
 		:gen_server.cast(to_pid, {:signal, info.ref, value})
 	end
+	
 	defp signal(_) do
 		nil
 	end
@@ -112,10 +110,10 @@ Creates a new CLA neuron.
 * Examples:
 
 	iex> Neuron.create() 
-	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	%NeuronInfo{ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []}
 
 """
-	def create(), do: NeuronInfo.new
+	def create(), do: %NeuronInfo{}
 	def create(neuron), do: neuron
 
   @doc """
@@ -125,13 +123,13 @@ connect(n1, n2): Connects neuron n2 to neuron n1's distal dendrites.
 * Examples:
 
 	iex> n1 = Neuron.create() 
-	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
-	iex> n1 = n1.ref("n1")
-	NeuronInfo[ref: "n1", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	%NeuronInfo{ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []}
+	iex> n1 = %{n1 | ref: "n1"}
+	%NeuronInfo{ref: "n1", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []}
 	iex> n2 = Neuron.create()
-	NeuronInfo[ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
-	iex> n2 = n2.ref("n2")
-	NeuronInfo[ref: "n2", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []]
+	%NeuronInfo{ref: nil, pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []}
+	iex> n2 = %{n2 | ref: "n2"}
+	%NeuronInfo{ref: "n2", pid: nil, activation: 0, predictivity: 0, feedforward: [], dendrites: [], axons: []}
 	iex> Neuron.connect(n1, n2)
 	:ok
 
